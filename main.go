@@ -2,14 +2,10 @@ package main
 
 import (
 	"context"
-
 	"flag"
-
 	"net/http"
-
-	"strings"
-
 	"strconv"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -20,11 +16,15 @@ import (
 )
 
 var (
-	log  = logrus.WithField("package", "main")
-	port = flag.String("port", "4041", "Port to listen on")
+	log   = logrus.WithField("package", "main")
+	port  = flag.String("port", "4041", "Port to listen on")
+	debug = flag.Bool("debug", false, "Enable debug logs")
 )
 
 func main() {
+	if *debug {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
 	logger := log.WithField("function", "main")
 	logger.Info("Starting S3 CMD")
 	listenAndServe()
