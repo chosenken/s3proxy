@@ -3,10 +3,7 @@
 // Copyright (c) 2012-2015 Ugorji Nwoke. All rights reserved.
 // Use of this source code is governed by a MIT license found in the LICENSE file.
 
-// ************************************************************
-// DO NOT EDIT.
-// THIS FILE IS AUTO-GENERATED from gen-helper.go.tmpl
-// ************************************************************
+// Code generated from gen-helper.go.tmpl - DO NOT EDIT.
 
 package codec
 
@@ -16,7 +13,7 @@ import (
 )
 
 // GenVersion is the current version of codecgen.
-const GenVersion = 6
+const GenVersion = 8
 
 // This file is used to generate helper code for codecgen.
 // The values here i.e. genHelper(En|De)coder are not to be used directly by
@@ -61,13 +58,14 @@ func (f genHelperEncoder) EncBasicHandle() *BasicHandle {
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
 func (f genHelperEncoder) EncBinary() bool {
-	return f.e.be // f.e.hh.isBinaryEncoding()
+	return f.e.cf.be // f.e.hh.isBinaryEncoding()
 }
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
 func (f genHelperEncoder) EncFallback(iv interface{}) {
 	// println(">>>>>>>>> EncFallback")
-	f.e.encodeI(iv, false, false)
+	// f.e.encodeI(iv, false, false)
+	f.e.encodeValue(reflect.ValueOf(iv), nil, false)
 }
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
@@ -90,7 +88,7 @@ func (f genHelperEncoder) EncBinaryMarshal(iv encoding.BinaryMarshaler) {
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
 func (f genHelperEncoder) EncRaw(iv Raw) {
-	f.e.raw(iv)
+	f.e.rawBytes(iv)
 }
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
@@ -103,7 +101,7 @@ func (f genHelperEncoder) TimeRtidIfBinc() uintptr {
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
 func (f genHelperEncoder) IsJSONHandle() bool {
-	return f.e.js
+	return f.e.cf.js
 }
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
@@ -123,13 +121,6 @@ func (f genHelperEncoder) EncExt(v interface{}) (r bool) {
 		return true
 	}
 	return false
-}
-
-// FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
-func (f genHelperEncoder) EncSendContainerState(c containerState) {
-	if f.e.cr != nil {
-		f.e.cr.sendContainerState(c)
-	}
 }
 
 // ---------------- DECODER FOLLOWS -----------------
@@ -157,7 +148,12 @@ func (f genHelperDecoder) DecScratchBuffer() []byte {
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
 func (f genHelperDecoder) DecFallback(iv interface{}, chkPtr bool) {
 	// println(">>>>>>>>> DecFallback")
-	f.d.decodeI(iv, chkPtr, false, false, false)
+	rv := reflect.ValueOf(iv)
+	if chkPtr {
+		rv = f.d.ensureDecodeable(rv)
+	}
+	f.d.decodeValue(rv, nil, false)
+	// f.d.decodeValueFallback(rv)
 }
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
@@ -203,7 +199,7 @@ func (f genHelperDecoder) DecBinaryUnmarshal(bm encoding.BinaryUnmarshaler) {
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
 func (f genHelperDecoder) DecRaw() []byte {
-	return f.d.raw()
+	return f.d.rawBytes()
 }
 
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
@@ -243,11 +239,4 @@ func (f genHelperDecoder) DecInferLen(clen, maxlen, unit int) (rvlen int) {
 // FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
 func (f genHelperDecoder) StringView(v []byte) string {
 	return stringView(v)
-}
-
-// FOR USE BY CODECGEN ONLY. IT *WILL* CHANGE WITHOUT NOTICE. *DO NOT USE*
-func (f genHelperDecoder) DecSendContainerState(c containerState) {
-	if f.d.cr != nil {
-		f.d.cr.sendContainerState(c)
-	}
 }
